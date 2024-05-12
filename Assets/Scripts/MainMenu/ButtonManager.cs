@@ -13,6 +13,8 @@ public class ButtonManager : MonoBehaviour
 
     public void OnPointerEnter()
     {
+        
+
         text.DOKill();
         text.DOColor(ColorSelected, 0.2f);
     }
