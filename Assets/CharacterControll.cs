@@ -9,14 +9,13 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
     public float walkSpeed = 24f;
     //public float runSpeed = 12f;
-    public float jumpPower = 7f;
-    public float gravity = 10f;
+    public float jumpPower = 12f;
+    public float gravity = 5f;
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
-    public float defaultHeight = 2f;
+    public float defaultHeight = 1f;
     public float crouchHeight = 1f;
-    public float crouchSpeed = 24f;
-    public float momentumFactor = 1.0f;
+    public float crouchSpeed = 12f;
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
@@ -33,14 +32,29 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        if (!characterController.isGrounded)
+        {
+
+        }
+       /* Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         float curSpeedX = canMove ? walkSpeed * Input.GetAxis("Vertical") : 0;
         float curSpeedY = canMove ? walkSpeed * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+        moveDirection = (forward * curSpeedX) + (right * curSpeedY);*/
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+        float movementDirectionY = moveDirection.y;
+        float curSpeedX = canMove ? walkSpeed * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? walkSpeed * Input.GetAxis("Horizontal") : 0;
+        Vector3 desiredMoveDirection = forward * curSpeedX + right * curSpeedY;
+        desiredMoveDirection.Normalize(); // Normalize the direction to ensure consistent speed
+
+        float curSpeed = canMove ? walkSpeed : 0;
+
+        moveDirection = desiredMoveDirection * curSpeed;
 
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
@@ -50,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             moveDirection.y = movementDirectionY;
+            /*moveDirection.y -= gravity * Time.deltaTime;*/
         }
 
         if (!characterController.isGrounded)
@@ -60,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.CapsLock) && canMove)
         {
             characterController.height = crouchHeight;
-            //walkSpeed = crouchSpeed;
+            walkSpeed = crouchSpeed;
             //runSpeed = crouchSpeed;
             
         }
@@ -80,5 +95,6 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
+       
     }
 }
